@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'database_helper.dart';
+import 'climbing_log.dart';
+import 'rack_management.dart';
 
 void main() {
   runApp(const YetAnotherClimbingLogApp());
@@ -33,36 +35,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-  List<Map<String, dynamic>> _items = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _refreshItems();
-  }
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-    _addItem();
-  }
-
-  Future<void> _addItem() async {
-    await DatabaseHelper.instance.insertItem({
-      'name': 'Item $_counter',
-      'quantity': _counter,
-    });
-    _refreshItems();
-  }
-
-  void _refreshItems() async {
-    final data = await DatabaseHelper.instance.queryAllItems();
-    setState(() {
-      _items = data;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -74,33 +46,37 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const ClimbingLog()),
+                );
+              },
+              child: const Text('Check my log'),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                 Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const RackManagement()),
+                );
+              },
+              child: const Text('Manage my rack'),
+            ),
             const Text(
               'You have pushed the button this many times:',
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
             const SizedBox(height: 20),
-            Expanded(
-              child: ListView.builder(
-                itemCount: _items.length,
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    title: Text(_items[index]['name']),
-                    subtitle: Text('Quantity: ${_items[index]['quantity']}'),
-                  );
-                },
-              ),
-            ),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: null,
+      //   tooltip: 'Increment',
+      //   child: const Icon(Icons.add),
+      //),
     );
   }
 }

@@ -17,16 +17,11 @@ class DatabaseHelper {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
 
-    return await openDatabase(path, version: 1, onCreate: _createDB);
+    return await openDatabase(path, version: 1, onCreate: _createDB, onUpgrade: _onUpgrade);
   }
 
   Future _createDB(Database db, int version) async {
     await db.execute('''
-      CREATE TABLE items(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT,
-        quantity INTEGER
-      );
       CREATE TABLE "users" (
         "user_id"	INTEGER NOT NULL UNIQUE,
         "user_name"	TEXT,
@@ -80,27 +75,18 @@ class DatabaseHelper {
         FOREIGN KEY("harness_id") REFERENCES "harnesses"("harness_id"),
         FOREIGN KEY("route_id") REFERENCES "routes"("route_id"),
         PRIMARY KEY("climbed_routes_id" AUTOINCREMENT)
-      )
+      );
     ''');
+
+    print('DB and tables created succesfully');
+  }
+
+  Future _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      await db.execute('DROP TABLE IF EXISTS items');
+    }
   }
   // Update methods for each table
-
-  // Items
-  Future<int> updateItem(int id, Map<String, dynamic> row) async {
-    final db = await instance.database;
-    return await db.update('items', row, where: 'id = ?', whereArgs: [id]);
-  }
-
-  // Items
-  Future<int> insertItem(Map<String, dynamic> row) async {
-    final db = await instance.database;
-    return await db.insert('items', row);
-  }
-
-  Future<List<Map<String, dynamic>>> getAllItems() async {
-    final db = await instance.database;
-    return await db.query('items');
-  }
 
   // Users
   Future<int> insertUser(Map<String, dynamic> row) async {
@@ -204,14 +190,14 @@ class DatabaseHelper {
     return await db.insert('climbed_routes', row);
   }
 
-  Future<List<Map<String, dynamic>>> getAllClimbedRoutes() async {
+  Future<List<Map<String, dynamic>>> getAllClimbedRoutes({int? limit, int? offset}) async {
     final db = await instance.database;
-    return await db.query('climbed_routes');
+    return await db .query('climbed_routes', limit: limit, offset: offset);
   }
 
   Future<int> updateClimbedRoute(int id, Map<String, dynamic> row) async {
     final db = await instance.database;
     return await db.update('climbed_routes', row, where: 'climbed_routes_id = ?', whereArgs: [id]);
   }
-
+  
 }
