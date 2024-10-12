@@ -20,39 +20,55 @@ class DatabaseHelper {
     return await openDatabase(path, version: 1, onCreate: _createDB, onUpgrade: _onUpgrade);
   }
 
+  Future<void> printAllTables() async {
+    final db = await instance.database;
+    var tables = await db.rawQuery("SELECT name FROM sqlite_master WHERE type='table'");
+    print('All tables in the database:');
+    for (var table in tables) {
+      print(table['name']);
+  }
+  }
+
+// db.execute is run several times as SQLite doesn't seem to handle multiple statement in a single execute
+// This might need optimisation later
   Future _createDB(Database db, int version) async {
     await db.execute('''
       CREATE TABLE "users" (
         "user_id"	INTEGER NOT NULL UNIQUE,
         "user_name"	TEXT,
         PRIMARY KEY("user_id" AUTOINCREMENT)
-      );
+      );''');
+    await db.execute('''
       CREATE TABLE "shoes" (
         "shoes_id"	INTEGER NOT NULL UNIQUE,
         "shoes_brand"	TEXT,
         "shoes_model"	TEXT,
         "shoes_size"	INTEGER,
         PRIMARY KEY("shoes_id" AUTOINCREMENT)
-      );
+      );''');
+    await db.execute('''
       CREATE TABLE "harnesses" (
         "harness_id"	INTEGER NOT NULL UNIQUE,
         "harness_brand"	TEXT,
         "harness_model"	TEXT,
         PRIMARY KEY("harness_id" AUTOINCREMENT)
-      );
+      );''');
+    await db.execute('''
       CREATE TABLE "crags" (
         "crag_id"	INTEGER NOT NULL UNIQUE,
         "crag_name"	TEXT,
         "crag_coordinates"	TEXT,
         PRIMARY KEY("crag_id" AUTOINCREMENT)
-      );
+      );''');
+    await db.execute('''
       CREATE TABLE "sectors" (
         "sector_id"	INTEGER NOT NULL UNIQUE,
         "sector_name"	TEXT,
         "sector_crag_id"	INTEGER,
         FOREIGN KEY("sector_crag_id") REFERENCES "crags"("crag_id"),
         PRIMARY KEY("sector_id" AUTOINCREMENT)
-      );
+      );''');
+    await db.execute('''
       CREATE TABLE "routes" (
         "route_id"	INTEGER NOT NULL UNIQUE,
         "route_name"	TEXT,
@@ -62,7 +78,8 @@ class DatabaseHelper {
         "route_topo_number"	INTEGER,
         FOREIGN KEY("sector_id") REFERENCES "sectors"("sector_id"),
         PRIMARY KEY("route_id" AUTOINCREMENT)
-      );
+      );''');
+    await db.execute('''
       CREATE TABLE "climbed_routes" (
         "climbed_routes_id"	INTEGER NOT NULL UNIQUE,
         "route_id"	INTEGER,
@@ -78,7 +95,7 @@ class DatabaseHelper {
       );
     ''');
 
-    print('DB and tables created succesfully');
+    printAllTables();
   }
 
   Future _onUpgrade(Database db, int oldVersion, int newVersion) async {
