@@ -24,18 +24,39 @@ class AddClimbedRouteState extends State<AddClimbedRoute> {
   List<Map<String, dynamic>> _shoes = [];
   List<Map<String, dynamic>> _harnesses = [];
 
+  late Future<void> _dataLoadingFuture;
+
   @override
   void initState() {
     super.initState();
-    _loadEquipment();
-    if (widget.routeToEdit != null) {
-      _loadExistingRouteData();
+    _dataLoadingFuture = _loadData();
+  }
+
+  Future<void> _loadData() async {
+    if (_shoes.isEmpty || _harnesses.isEmpty) {
+      await _loadEquipment();
+    }
+    if (widget.routeToEdit != null && _routeName.isEmpty) {
+      await _loadExistingRouteData();
     }
   }
 
   Future<void> _loadExistingRouteData() async {
-    final routeId = int.parse(widget.routeToEdit!['id'].toString());
-    final routeData = await DatabaseHelper.instance.getClimbedRouteById(routeId);
+    if (widget.routeToEdit == null || widget.routeToEdit!['climbed_routes_id'] == null) {
+      print('Error: No route ID found for editing');
+      return;
+    }
+
+    final routeId = widget.routeToEdit!['climbed_routes_id'];
+    // Use the routeId directly if it's already an int, or parse it if it's a string
+    final parsedRouteId = routeId is int ? routeId : int.tryParse(routeId.toString());
+    
+    if (parsedRouteId == null) {
+      print('Error: Invalid route ID');
+      return;
+    }
+
+    final routeData = await DatabaseHelper.instance.getClimbedRouteById(parsedRouteId);
     if (routeData != null) {
       setState(() {
         _routeName = routeData['route_name'] ?? '';
@@ -44,8 +65,8 @@ class AddClimbedRouteState extends State<AddClimbedRoute> {
         _tryNumber = routeData['try_number'] ?? 1;
         _isDone = routeData['is_done'] == 1;
         _doneType = routeData['done_type'] ?? '';
-        _selectedShoeId = routeData['shoe_id'] != null ? int.parse(routeData['shoe_id'].toString()) : null;
-        _selectedHarnessId = routeData['harness_id'] != null ? int.parse(routeData['harness_id'].toString()) : null;
+        _selectedShoeId = routeData['shoe_id'] != null ? int.tryParse(routeData['shoe_id'].toString()) : null;
+        _selectedHarnessId = routeData['harness_id'] != null ? int.tryParse(routeData['harness_id'].toString()) : null;
       });
     }
   }
@@ -63,105 +84,120 @@ class AddClimbedRouteState extends State<AddClimbedRoute> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add Climbed Route'),
+        title: Text(widget.routeToEdit != null ? 'Edit Climbed Route' : 'Add Climbed Route'),
       ),
-      body: Form(
-        key: _formKey,
-        child: ListView(
-          padding: const EdgeInsets.all(16.0),
-          children: [
-            TextFormField(
-              decoration: const InputDecoration(labelText: 'Route Name'),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter a route name';
-                }
-                return null;
-              },
-              onSaved: (value) => _routeName = value!,
-            ),
-            DropdownButtonFormField<String>(
-              decoration: const InputDecoration(labelText: 'Route Type'),
-              items: ['Sport','Boulder','Trad'].map((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-              onChanged: (value) => setState(() => _routeType = value!),
-              validator: (value) => value == null ? 'Please select a route type' : null,
-            ),
-            TextFormField(
-              decoration: const InputDecoration(labelText: 'Route Grade'),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter a route grade';
-                }
-                return null;
-              },
-              onSaved: (value) => _routeGrade = value!,
-            ),
-            TextFormField(
-              decoration: const InputDecoration(labelText: 'Try Number'),
-              keyboardType: TextInputType.number,
-              initialValue: '1',
-              validator: (value) {
-                if (value == null || int.tryParse(value) == null) {
-                  return 'Please enter a valid number';
-                }
-                return null;
-              },
-              onSaved: (value) => _tryNumber = int.parse(value!),
-            ),
-            SwitchListTile(
-              title: const Text('Is Done'),
-              value: _isDone,
-              onChanged: (bool value) {
-                setState(() {
-                  _isDone = value;
-                });
-              },
-            ),
-            if (_isDone)
-              DropdownButtonFormField<String>(
-                decoration: const InputDecoration(labelText: 'Done Type'),
-                items: ['Flash', 'Onsight', 'Redpoint'].map((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-                onChanged: (value) => setState(() => _doneType = value!),
-                validator: (value) => _isDone && value == null ? 'Please select a done type' : null,
+      body: FutureBuilder(
+        future: _dataLoadingFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else {
+            return Form(
+              key: _formKey,
+              child: ListView(
+                padding: const EdgeInsets.all(16.0),
+                children: [
+                  TextFormField(
+                    decoration: const InputDecoration(labelText: 'Route Name'),
+                    initialValue: _routeName,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter a route name';
+                      }
+                      return null;
+                    },
+                    onSaved: (value) => _routeName = value!,
+                  ),
+                  DropdownButtonFormField<String>(
+                    decoration: const InputDecoration(labelText: 'Route Type'),
+                    value: _routeType.isNotEmpty ? _routeType : null,
+                    items: ['Sport','Boulder','Trad'].map((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                    onChanged: (value) => setState(() => _routeType = value!),
+                    validator: (value) => value == null ? 'Please select a route type' : null,
+                  ),
+                  TextFormField(
+                    decoration: const InputDecoration(labelText: 'Route Grade'),
+                    initialValue: _routeGrade,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter a route grade';
+                      }
+                      return null;
+                    },
+                    onSaved: (value) => _routeGrade = value!,
+                  ),
+                  TextFormField(
+                    decoration: const InputDecoration(labelText: 'Try Number'),
+                    keyboardType: TextInputType.number,
+                    initialValue: _tryNumber.toString(),
+                    validator: (value) {
+                      if (value == null || int.tryParse(value) == null) {
+                        return 'Please enter a valid number';
+                      }
+                      return null;
+                    },
+                    onSaved: (value) => _tryNumber = int.parse(value!),
+                  ),
+                  SwitchListTile(
+                    title: const Text('Is Done'),
+                    value: _isDone,
+                    onChanged: (bool value) {
+                      setState(() {
+                        _isDone = value;
+                      });
+                    },
+                  ),
+                  if (_isDone)
+                    DropdownButtonFormField<String>(
+                      decoration: const InputDecoration(labelText: 'Done Type'),
+                      value: _doneType.isNotEmpty ? _doneType : null,
+                      items: ['Flash', 'Onsight', 'Redpoint'].map((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                      onChanged: (value) => setState(() => _doneType = value!),
+                      validator: (value) => _isDone && value == null ? 'Please select a done type' : null,
+                    ),
+                  DropdownButtonFormField<int>(
+                    decoration: const InputDecoration(labelText: 'Shoes (Optional)'),
+                    value: _selectedShoeId,
+                    items: _shoes.map((shoe) {
+                      return DropdownMenuItem<int>(
+                        value: shoe['shoes_id'],
+                        child: Text('${shoe['shoes_brand']} ${shoe['shoes_model']}'),
+                      );
+                    }).toList(),
+                    onChanged: (value) => setState(() => _selectedShoeId = value),
+                  ),
+                  DropdownButtonFormField<int>(
+                    decoration: const InputDecoration(labelText: 'Harness (Optional)'),
+                    value: _selectedHarnessId,
+                    items: _harnesses.map((harness) {
+                      return DropdownMenuItem<int>(
+                        value: harness['harness_id'],
+                        child: Text('${harness['harness_brand']} ${harness['harness_model']}'),
+                      );
+                    }).toList(),
+                    onChanged: (value) => setState(() => _selectedHarnessId = value),
+                  ),
+                  ElevatedButton(
+                    onPressed: _submitForm,
+                    child: Text(widget.routeToEdit != null ? 'Update Climbed Route' : 'Add Climbed Route'),
+                  ),
+                ],
               ),
-            DropdownButtonFormField<int>(
-              decoration: const InputDecoration(labelText: 'Shoes (Optional)'),
-              items: _shoes.map((shoe) {
-                return DropdownMenuItem<int>(
-                  value: shoe['shoes_id'],
-                  child: Text('${shoe['shoes_brand']} ${shoe['shoes_model']}'),
-                );
-              }).toList(),
-              onChanged: (value) => setState(() => _selectedShoeId = value),
-              validator: (value) => null,  // Remove validation for shoes
-            ),
-            DropdownButtonFormField<int>(
-              decoration: const InputDecoration(labelText: 'Harness (Optional)'),
-              items: _harnesses.map((harness) {
-                return DropdownMenuItem<int>(
-                  value: harness['harness_id'],
-                  child: Text('${harness['harness_brand']} ${harness['harness_model']}'),
-                );
-              }).toList(),
-              onChanged: (value) => setState(() => _selectedHarnessId = value),
-              validator: (value) => null,  // Remove validation for harness
-            ),
-            ElevatedButton(
-              onPressed: _submitForm,
-              child: const Text('Add Climbed Route'),
-            ),
-          ],
-        ),
+            );
+          }
+        },
       ),
     );
   }
@@ -202,7 +238,7 @@ class AddClimbedRouteState extends State<AddClimbedRoute> {
     if (widget.routeToEdit != null) {
       // Update existing route
       await DatabaseHelper.instance.updateClimbedRoute(
-        widget.routeToEdit!['id'],
+        widget.routeToEdit!['climbed_routes_id'],
         {
           'route_id': widget.routeToEdit!['route_id'],
           'try_number': _tryNumber,
