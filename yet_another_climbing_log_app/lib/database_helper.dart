@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
@@ -23,9 +24,13 @@ class DatabaseHelper {
   Future<void> printAllTables() async {
     final db = await instance.database;
     var tables = await db.rawQuery("SELECT name FROM sqlite_master WHERE type='table'");
-    print('All tables in the database:');
+    if (kDebugMode) {
+      print('All tables in the database:');
+    }
     for (var table in tables) {
-      print(table['name']);
+      if (kDebugMode) {
+        print(table['name']);
+      }
   }
   }
 
@@ -43,7 +48,7 @@ class DatabaseHelper {
         "shoes_id"	INTEGER NOT NULL UNIQUE,
         "shoes_brand"	TEXT,
         "shoes_model"	TEXT,
-        "shoes_size"	INTEGER,
+        "shoes_size"	NUMERIC,
         PRIMARY KEY("shoes_id" AUTOINCREMENT)
       );''');
     await db.execute('''
@@ -209,7 +214,26 @@ class DatabaseHelper {
 
   Future<List<Map<String, dynamic>>> getAllClimbedRoutes({int? limit, int? offset}) async {
     final db = await instance.database;
-    return await db .query('climbed_routes', limit: limit, offset: offset);
+    return await db.rawQuery('''
+      SELECT cr.*, r.route_name, r.route_type, r.route_grade
+      FROM climbed_routes cr
+      JOIN routes r ON cr.route_id = r.route_id
+      ORDER BY cr.climbed_routes_id DESC
+      ${limit != null ? 'LIMIT $limit' : ''}
+      ${offset != null ? 'OFFSET $offset' : ''}
+    ''');
+  }
+
+  Future<Map<String, dynamic>?> getClimbedRouteById(int id) async {
+    final db = await instance.database;
+    final List<Map<String, dynamic>> results = await db.rawQuery('''
+      SELECT cr.*, r.route_name, r.route_type, r.route_grade
+      FROM climbed_routes cr
+      JOIN routes r ON cr.route_id = r.route_id
+      WHERE cr.climbed_routes_id = ?
+      LIMIT 1
+    ''', [id]);
+    return results.isNotEmpty ? results.first : null;
   }
 
   Future<int> updateClimbedRoute(int id, Map<String, dynamic> row) async {

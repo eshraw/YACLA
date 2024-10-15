@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'database_helper.dart';
+import 'add_climbed_route.dart';
 
 class ClimbingLog extends StatefulWidget {
   const ClimbingLog({super.key});
@@ -39,6 +40,24 @@ class ClimbingLogState extends State<ClimbingLog> {
     });
   }
 
+  Future<void> _editRoute(Map<String, dynamic> route) async {
+    final editedRoute = await Navigator.push<Map<String, dynamic>>(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AddClimbedRoute(routeToEdit: route),
+      ),
+    );
+
+    if (editedRoute != null) {
+      setState(() {
+        final index = _climbedRoutes.indexWhere((r) => r['id'] == route['id']);
+        if (index != -1) {
+          _climbedRoutes[index] = editedRoute;
+        }
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -58,6 +77,7 @@ class ClimbingLogState extends State<ClimbingLog> {
               title: Text(route['route_name'] ?? 'Unknown Route'),
               subtitle: Text('Grade: ${route['route_grade'] ?? 'Unknown'}'),
               trailing: Text(route['done_type'] ?? 'Unknown'),
+              onTap: () => _editRoute(route),
             );
           } else if (_isLoading) {
             return const Center(child: CircularProgressIndicator());

@@ -3,6 +3,7 @@ import 'package:path/path.dart';
 import 'database_helper.dart';
 import 'climbing_log.dart';
 import 'rack_management.dart';
+import 'add_climbed_route.dart';
 
 void main() {
   runApp(const YetAnotherClimbingLogApp());
@@ -65,18 +66,20 @@ class _MyHomePageState extends State<MyHomePage> {
               },
               child: const Text('Manage my rack'),
             ),
-            const Text(
-              'You have pushed the button this many times:',
-            ),
             const SizedBox(height: 20),
           ],
         ),
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: null,
-      //   tooltip: 'Increment',
-      //   child: const Icon(Icons.add),
-      //),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const AddClimbedRoute()),
+          );
+        },
+        tooltip: 'Add Climbed Route',
+        child: const Icon(Icons.add),
+      ),
     );
   }
 }
