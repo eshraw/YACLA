@@ -89,6 +89,16 @@ class ClimbingLogState extends State<ClimbingLog> {
           }
         },
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const AddClimbedRoute()),
+          );
+        },
+        tooltip: 'Add Climbed Route',
+        child: const Icon(Icons.add),
+      ),
     );
   }
 }

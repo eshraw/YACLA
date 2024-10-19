@@ -158,6 +158,20 @@ class DatabaseHelper {
     return await db.update('harnesses', row, where: 'harness_id = ?', whereArgs: [id]);
   }
 
+  //Rack
+  Future<Map<String, dynamic>?> getUsedRackByClimbedRouteId(int id) async{
+    final db = await instance.database;
+    final List<Map<String, dynamic>> results = await db.rawQuery('''
+      SELECT s.brand, s.model, h.brand, h.model
+      FROM climbed_routes cr
+      JOIN shoes s ON cr.shoes_id = s.shoes_id
+      JOIN harnesses h ON cr.harness_id = h.harness_id
+      WHERE cr.climbed_routes_id = ?
+      LIMIT 1
+    ''', [id]);
+    return results.isNotEmpty ? results.first : null;
+  }
+
   // Crags
   Future<int> insertCrag(Map<String, dynamic> row) async {
     final db = await instance.database;
