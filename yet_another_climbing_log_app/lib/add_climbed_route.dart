@@ -65,8 +65,8 @@ class AddClimbedRouteState extends State<AddClimbedRoute> {
         _tryNumber = routeData['try_number'] ?? 1;
         _isDone = routeData['is_done'] == 1;
         _doneType = routeData['done_type'] ?? '';
-        _selectedShoeId = routeData['shoe_id'] != null ? int.tryParse(routeData['shoe_id'].toString()) : null;
-        _selectedHarnessId = routeData['harness_id'] != null ? int.tryParse(routeData['harness_id'].toString()) : null;
+        _selectedShoeId = routeData['shoes_id'];
+        _selectedHarnessId = routeData['harness_id'];
       });
     }
   }
