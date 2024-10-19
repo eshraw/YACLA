@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'database_helper.dart';
+import 'app_constants.dart';
 
 class AddClimbedRoute extends StatefulWidget {
   final Map<String, dynamic>? routeToEdit;
@@ -122,16 +123,17 @@ class AddClimbedRouteState extends State<AddClimbedRoute> {
                     onChanged: (value) => setState(() => _routeType = value!),
                     validator: (value) => value == null ? 'Please select a route type' : null,
                   ),
-                  TextFormField(
+                  DropdownButtonFormField<String>(
                     decoration: const InputDecoration(labelText: 'Route Grade'),
-                    initialValue: _routeGrade,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter a route grade';
-                      }
-                      return null;
-                    },
-                    onSaved: (value) => _routeGrade = value!,
+                    value: _routeGrade.isNotEmpty ? _routeGrade : null,
+                    items: AppConstants.CLIMBING_GRADES.map((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                    onChanged: (value) => setState(() => _routeGrade = value!),
+                    validator: (value) => value == null ? 'Please select a route grade' : null,
                   ),
                   TextFormField(
                     decoration: const InputDecoration(labelText: 'Try Number'),
