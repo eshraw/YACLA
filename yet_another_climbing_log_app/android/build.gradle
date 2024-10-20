@@ -1,16 +1,35 @@
-allprojects {
+buildscript {
+    ext.kotlin_version = '1.7.10'
+    // Add this line to specify Java 11
+    ext.java_version = JavaVersion.VERSION_17
+
     repositories {
         google()
         mavenCentral()
     }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.1.0'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
 }
+
+//plugins {
+//    id 'com.android.application' version '8.1.0' apply false
+//    id 'com.android.library' version '8..0' apply false
+//}
 
 rootProject.buildDir = "../build"
 subprojects {
-    project.buildDir = "${rootProject.buildDir}/${project.name}"
-}
-subprojects {
-    project.evaluationDependsOn(":app")
+    project.buildDir = "${rootProject.buildDir}/${project.name}"    
+    // Move Java compatibility configuration here
+    plugins.withType(com.android.build.gradle.BasePlugin).configureEach {
+        android {
+            compileOptions {
+                sourceCompatibility java_version
+                targetCompatibility java_version
+            }
+        }
+    }
 }
 
 tasks.register("clean", Delete) {
