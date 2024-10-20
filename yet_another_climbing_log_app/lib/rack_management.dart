@@ -106,9 +106,12 @@ class RackManagementState extends State<RackManagement> {
               ),
               TextField(
                 decoration: const InputDecoration(labelText: 'Size'),
-                onChanged: (value) => size = value,
+                onChanged: (value) {
+                  // Replace comma with period and parse to double
+                  size = double.tryParse(value.replaceAll(',', '.'))?.toString() ?? '';
+                },
                 controller: TextEditingController(text: size),
-                keyboardType: TextInputType.number,
+                keyboardType: TextInputType.numberWithOptions(decimal: true),
               ),
             ],
           ),
@@ -262,8 +265,12 @@ class RackManagementState extends State<RackManagement> {
               ),
               TextField(
                 decoration: const InputDecoration(labelText: 'Size'),
-                keyboardType: TextInputType.number,
-                onChanged: (value) => size = value,
+                onChanged: (value) {
+                  // Replace comma with period and parse to double
+                  size = double.tryParse(value.replaceAll(',', '.'))?.toString() ?? '';
+                },
+                controller: TextEditingController(text: size),
+                keyboardType: TextInputType.numberWithOptions(decimal: true),
               ),
             ],
           ),

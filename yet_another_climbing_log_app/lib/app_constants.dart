@@ -1,5 +1,5 @@
 class AppConstants {
-  static const List<String> CLIMBING_GRADES = [
+  static const List<String> climbing_grades = [
     '3', '4', '5A', '5A+', '5B',
     '5B+', '5C', '5C+', '6A',
     '6A+', '6B', '6B+', '6C',
