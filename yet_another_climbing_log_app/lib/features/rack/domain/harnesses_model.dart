@@ -1,3 +1,9 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
+
+part 'harnesses_model.freezed.dart';
+part 'harnesses_model.g.dart';
+
+@freezed
 class Harness with _$Harness {
   const factory Harness({
     required int id,

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'database_helper.dart';
+import 'shared/database_helper.dart';
 
 class RackManagement extends StatefulWidget {
   const RackManagement({super.key});

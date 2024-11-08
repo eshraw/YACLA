@@ -1,6 +1,10 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-
 import 'rack_state.dart';
+import '../data/rack_repository_impl.dart';
+import '../domain/shoes_model.dart';
+import '../domain/harnesses_model.dart';
+
+part 'rack_controller.g.dart';
 
 @riverpod
 class RackController extends _$RackController {
@@ -11,7 +15,7 @@ class RackController extends _$RackController {
 
   Future<RackState> _loadRackItems() async {
     state = const AsyncValue.loading();
-    return await AsyncValue.guard(() async {
+    final value = await AsyncValue.guard(() async {
       final repository = ref.read(rackRepositoryImplProvider.notifier);
       final shoes = await repository.getShoes();
       final harnesses = await repository.getHarnesses();
@@ -22,6 +26,7 @@ class RackController extends _$RackController {
         isLoading: false,
       );
     });
+    return value.value!;
   }
 
   Future<void> addShoe(Shoe shoe) async {
@@ -33,5 +38,12 @@ class RackController extends _$RackController {
     });
   }
 
-  // Implement other controller methods...
+  Future<void> addHarness(Harness harness) async {
+    state = const AsyncValue.loading();
+    state = await AsyncValue.guard(() async {
+      final repository = ref.read(rackRepositoryImplProvider.notifier);
+      await repository.addHarness(harness);
+      return _loadRackItems();
+    });
+  }
 }

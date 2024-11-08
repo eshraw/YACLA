@@ -1,3 +1,9 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
+
+part 'shoes_model.freezed.dart';
+part 'shoes_model.g.dart';
+
+@freezed
 class Shoe with _$Shoe {
   const factory Shoe({
     required int id,

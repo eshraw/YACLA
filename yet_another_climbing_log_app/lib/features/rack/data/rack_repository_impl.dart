@@ -1,11 +1,13 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../domain/harnesses_model.dart';
 import '../domain/shoes_model.dart';
-
+import 'rack_local_datasource.dart';
 import 'rack_repository.dart';
 
+part 'rack_repository_impl.g.dart';
+
 @Riverpod(keepAlive: true)
-class RackRepositoryImpl extends _$RackRepositoryImpl implements RackRepository {
+class RackRepositoryImpl extends AsyncNotifier<void> implements RackRepository {
   @override
   FutureOr<void> build() {}
 
