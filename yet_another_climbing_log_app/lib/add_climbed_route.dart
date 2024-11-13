@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'database_helper.dart';
-import 'app_constants.dart';
+import 'shared/database_helper.dart';
+import 'common/app_constants.dart';
 
 class AddClimbedRoute extends StatefulWidget {
   final Map<String, dynamic>? routeToEdit;

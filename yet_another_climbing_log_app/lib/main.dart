@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:path/path.dart';
-import 'database_helper.dart';
 import 'climbing_log.dart';
 import 'rack_management.dart';
 import 'add_climbed_route.dart';

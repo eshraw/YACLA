@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'database_helper.dart';
+import 'shared/database_helper.dart';
 import 'add_climbed_route.dart';
 
 class ClimbingLog extends StatefulWidget {
