@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../application/rack_controller.dart';
+import 'rack_controller.dart';
 import '/common/widgets/async_value_widget.dart';
 import '../domain/shoes_model.dart';
 import '../domain/harnesses_model.dart';
