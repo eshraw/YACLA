@@ -18,7 +18,25 @@ class ClimbingLogLocalDatasource extends _$ClimbingLogLocalDatasource {
   }
 
   Future<void> addClimbedRoute(Map<String, dynamic> route) async {
-    await DatabaseHelper.instance.insertClimbedRoute(route);
+    final db = await DatabaseHelper.instance.database;
+    
+    // First, insert into routes table
+    final routeId = await db.insert('routes', {
+      'route_name': route['route_name'],
+      'route_type': route['route_type'],
+      'route_grade': route['route_grade'],
+      'sector_id': route['sector_id'] ?? 1,  // Default sector if none specified
+    });
+
+    // Then insert into climbed_routes table
+    await db.insert('climbed_routes', {
+      'route_id': routeId,
+      'try_number': route['try_number'],
+      'is_done': route['is_done'],
+      'done_type': route['done_type'],
+      'shoes_id': route['shoes_id'],
+      'harness_id': route['harness_id'],
+    });
   }
 
   Future<void> updateClimbedRoute(int id, Map<String, dynamic> route) async {

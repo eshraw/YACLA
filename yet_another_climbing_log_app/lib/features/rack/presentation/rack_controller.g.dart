@@ -6,7 +6,7 @@ part of 'rack_controller.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$rackControllerHash() => r'40790c511108532231c7b667241aa71455b8bf65';
+String _$rackControllerHash() => r'8ff6241f56ebd58fd1ca2586c788396c2ac43002';
 
 /// See also [RackController].
 @ProviderFor(RackController)

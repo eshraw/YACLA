@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '/common/widgets/async_value_widget.dart';
 import 'climbed_routes_list.dart';
 import 'climbing_log_controller.dart';
+import 'add_climbed_route_screen.dart';
 
 class ClimbingLogScreen extends ConsumerWidget {
   const ClimbingLogScreen({super.key});
@@ -31,7 +32,12 @@ class ClimbingLogScreen extends ConsumerWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.pushNamed(context, '/add-climbed-route');
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const AddClimbedRouteScreen(),
+            ),
+          );
         },
         child: const Icon(Icons.add),
       ),

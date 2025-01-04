@@ -7,7 +7,7 @@ import '../domain/harnesses_model.dart';
 part 'rack_controller.g.dart';
 
 @riverpod
-class RackController extends _$RackController {
+class RackController extends AutoDisposeAsyncNotifier<RackState> {
   @override
   FutureOr<RackState> build() async {
     return await _loadRackItems();
@@ -38,11 +38,29 @@ class RackController extends _$RackController {
     });
   }
 
+  Future<void> updateShoe(Shoe shoe) async {
+    state = const AsyncValue.loading();
+    state = await AsyncValue.guard(() async {
+      final repository = ref.read(rackRepositoryImplProvider.notifier);
+      await repository.updateShoe(shoe);
+      return _loadRackItems();
+    });
+  }
+
   Future<void> addHarness(Harness harness) async {
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
       final repository = ref.read(rackRepositoryImplProvider.notifier);
       await repository.addHarness(harness);
+      return _loadRackItems();
+    });
+  }
+
+  Future<void> updateHarness(Harness harness) async {
+    state = const AsyncValue.loading();
+    state = await AsyncValue.guard(() async {
+      final repository = ref.read(rackRepositoryImplProvider.notifier);
+      await repository.updateHarness(harness);
       return _loadRackItems();
     });
   }

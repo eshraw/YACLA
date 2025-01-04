@@ -7,7 +7,7 @@ part of 'climbing_log_local_datasource.dart';
 // **************************************************************************
 
 String _$climbingLogLocalDatasourceHash() =>
-    r'33c954398a0a60a12d0f13e089973f72ddc0d179';
+    r'186981f0865e1fe3f70ccab77199263950f2afdb';
 
 /// See also [ClimbingLogLocalDatasource].
 @ProviderFor(ClimbingLogLocalDatasource)

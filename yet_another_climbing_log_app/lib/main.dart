@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
-import 'climbing_log.dart';
-import 'rack_management.dart';
-import 'add_climbed_route.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'features/climbing_log/presentation/climbing_log_screen.dart';
+import 'features/rack/presentation/rack_management_screen.dart';
+import 'features/climbing_log/presentation/add_climbed_route_screen.dart';
 
 void main() {
-  runApp(const YetAnotherClimbingLogApp());
+  runApp(const ProviderScope(child: YetAnotherClimbingLogApp()));
 }
 
 class YetAnotherClimbingLogApp extends StatelessWidget {
   const YetAnotherClimbingLogApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Yet Another Climbing Log App',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
@@ -24,22 +24,16 @@ class YetAnotherClimbingLogApp extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatefulWidget {
+class MyHomePage extends StatelessWidget {
   const MyHomePage({super.key, required this.title});
 
   final String title;
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text(title),
       ),
       body: Center(
         child: Column(
@@ -49,7 +43,7 @@ class _MyHomePageState extends State<MyHomePage> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const ClimbingLog()),
+                  MaterialPageRoute(builder: (context) => const ClimbingLogScreen()),
                 );
               },
               child: const Text('Check my log'),
@@ -57,14 +51,13 @@ class _MyHomePageState extends State<MyHomePage> {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                 Navigator.push(
+                Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const RackManagement()),
+                  MaterialPageRoute(builder: (context) => const RackManagementScreen()),
                 );
               },
               child: const Text('Manage my rack'),
             ),
-            const SizedBox(height: 20),
           ],
         ),
       ),
@@ -72,7 +65,9 @@ class _MyHomePageState extends State<MyHomePage> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const AddClimbedRoute()),
+            MaterialPageRoute(
+              builder: (context) => const AddClimbedRouteScreen(),
+            ),
           );
         },
         tooltip: 'Add Climbed Route',

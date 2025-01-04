@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../domain/shoes_model.dart';
+import 'edit_shoe_screen.dart';
 
 class ShoeList extends StatelessWidget {
   final List<Shoe> shoes;
@@ -17,6 +18,17 @@ class ShoeList extends StatelessWidget {
         return ListTile(
           title: Text(shoe.model),
           subtitle: Text('Size: ${shoe.size}'),
+          trailing: IconButton(
+            icon: const Icon(Icons.edit),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => EditShoeScreen(shoe: shoe),
+                ),
+              );
+            },
+          ),
         );
       },
     );
