@@ -126,7 +126,7 @@ class AddClimbedRouteState extends State<AddClimbedRoute> {
                   DropdownButtonFormField<String>(
                     decoration: const InputDecoration(labelText: 'Route Grade'),
                     value: _routeGrade.isNotEmpty ? _routeGrade : null,
-                    items: AppConstants.climbing_grades.map((String value) {
+                    items: AppConstants.climbingGrades.map((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
                         child: Text(value),

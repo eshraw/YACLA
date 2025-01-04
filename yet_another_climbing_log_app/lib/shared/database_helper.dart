@@ -254,5 +254,24 @@ class DatabaseHelper {
     final db = await instance.database;
     return await db.update('climbed_routes', row, where: 'climbed_routes_id = ?', whereArgs: [id]);
   }
-  
+
+  Future<void> deleteClimbedRoute(int id) async {
+    final db = await database;
+    await db.delete(
+      'climbed_routes',
+      where: 'climbed_routes_id = ?',
+      whereArgs: [id],
+    );
+  }
+
+  Future<String?> getSectorName(int sectorId) async {
+    final db = await database;
+    final result = await db.query(
+      'sectors',
+      columns: ['sector_name'],
+      where: 'sector_id = ?',
+      whereArgs: [sectorId],
+    );
+    return result.isNotEmpty ? result.first['sector_name'] as String : null;
+  }
 }

@@ -1,6 +1,6 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'climbing_log_local_datasource.dart';
 import 'climbing_log_repository.dart';
+import 'climbing_log_local_datasource.dart';
 
 part 'climbing_log_repository_impl.g.dart';
 

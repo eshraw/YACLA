@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../domain/route_model.dart' as route_model;
+import '/shared/database_helper.dart';
 
 class RoutesList extends StatelessWidget {
   final List<route_model.Route> routes;
@@ -24,7 +25,12 @@ class RoutesList extends StatelessWidget {
               children: [
                 Text('Grade: ${route.grade}'),
                 Text('Type: ${route.type}'),
-                Text('Sector ID: ${route.sectorId}'), // TODO: Get actual sector name
+                FutureBuilder<String?>(
+                  future: DatabaseHelper.instance.getSectorName(route.sectorId),
+                  builder: (context, snapshot) {
+                    return Text('Sector: ${snapshot.data ?? 'Unknown'}');
+                  },
+                ),
               ],
             ),
           ),

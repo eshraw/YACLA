@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../application/climbing_log_controller.dart';
 import '/common/widgets/async_value_widget.dart';
 import 'climbed_routes_list.dart';
+import 'climbing_log_controller.dart';
 
 class ClimbingLogScreen extends ConsumerWidget {
   const ClimbingLogScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Climbing Log'),
@@ -31,7 +31,7 @@ class ClimbingLogScreen extends ConsumerWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // TODO: Add navigation to add climbed route screen
+          Navigator.pushNamed(context, '/add-climbed-route');
         },
         child: const Icon(Icons.add),
       ),
