@@ -196,9 +196,15 @@ class RackManagementScreen extends ConsumerWidget {
           child: Column(
             children: [
               _buildSectionTitle(context, 'Shoes'),
-              ShoeList(shoes: state.shoes),
+              ShoeList(
+                shoes: state.shoes,
+                onDelete: (id) => ref.read(rackControllerProvider.notifier).deleteShoe(id),
+              ),
               _buildSectionTitle(context, 'Harnesses'),
-              HarnessList(harnesses: state.harnesses),
+              HarnessList(
+                harnesses: state.harnesses,
+                onDelete: (id) => ref.read(rackControllerProvider.notifier).deleteHarness(id),
+              ),
             ],
           ),
         ),

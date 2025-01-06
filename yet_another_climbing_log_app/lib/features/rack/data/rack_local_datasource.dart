@@ -32,4 +32,14 @@ class RackLocalDatasource extends _$RackLocalDatasource {
   Future<void> updateHarness(int id, Map<String, dynamic> harness) async {
     await DatabaseHelper.instance.updateHarness(id, harness);
   }
+
+  Future<void> deleteShoe(int id) async {
+    final db = await DatabaseHelper.instance.database;
+    await db.delete('shoes', where: 'shoes_id = ?', whereArgs: [id]);
+  }
+
+  Future<void> deleteHarness(int id) async {
+    final db = await DatabaseHelper.instance.database;
+    await db.delete('harnesses', where: 'harness_id = ?', whereArgs: [id]);
+  }
 }

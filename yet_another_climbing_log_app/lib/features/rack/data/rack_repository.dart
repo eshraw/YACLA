@@ -8,4 +8,6 @@ abstract class RackRepository {
   Future<void> addHarness(Harness harness);
   Future<void> updateShoe(Shoe shoe);
   Future<void> updateHarness(Harness harness);
+  Future<void> deleteShoe(int id);
+  Future<void> deleteHarness(int id);
 }

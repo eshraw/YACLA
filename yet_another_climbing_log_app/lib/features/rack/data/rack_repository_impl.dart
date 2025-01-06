@@ -62,4 +62,16 @@ class RackRepositoryImpl extends AsyncNotifier<void> implements RackRepository {
       'harness_model': harness.model,
     });
   }
+
+  @override
+  Future<void> deleteShoe(int id) async {
+    final datasource = ref.read(rackLocalDatasourceProvider.notifier);
+    await datasource.deleteShoe(id);
+  }
+
+  @override
+  Future<void> deleteHarness(int id) async {
+    final datasource = ref.read(rackLocalDatasourceProvider.notifier);
+    await datasource.deleteHarness(id);
+  }
 }

@@ -4,8 +4,13 @@ import 'edit_shoe_screen.dart';
 
 class ShoeList extends StatelessWidget {
   final List<Shoe> shoes;
+  final Function(int)? onDelete;
 
-  const ShoeList({super.key, required this.shoes});
+  const ShoeList({
+    super.key, 
+    required this.shoes,
+    this.onDelete,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -15,12 +20,12 @@ class ShoeList extends StatelessWidget {
       itemCount: shoes.length,
       itemBuilder: (context, index) {
         final shoe = shoes[index];
-        return ListTile(
-          title: Text(shoe.model),
-          subtitle: Text('Size: ${shoe.size}'),
-          trailing: IconButton(
-            icon: const Icon(Icons.edit),
-            onPressed: () {
+        return Card(
+          margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+          child: ListTile(
+            title: Text('${shoe.brand} ${shoe.model}'),
+            subtitle: Text('Size: ${shoe.size}'),
+            onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -28,6 +33,10 @@ class ShoeList extends StatelessWidget {
                 ),
               );
             },
+            trailing: onDelete != null ? IconButton(
+              icon: const Icon(Icons.delete),
+              onPressed: () => onDelete!(shoe.id),
+            ) : null,
           ),
         );
       },

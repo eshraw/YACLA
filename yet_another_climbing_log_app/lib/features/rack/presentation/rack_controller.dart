@@ -64,4 +64,22 @@ class RackController extends AutoDisposeAsyncNotifier<RackState> {
       return _loadRackItems();
     });
   }
+
+  Future<void> deleteShoe(int id) async {
+    state = const AsyncValue.loading();
+    state = await AsyncValue.guard(() async {
+      final repository = ref.read(rackRepositoryImplProvider.notifier);
+      await repository.deleteShoe(id);
+      return _loadRackItems();
+    });
+  }
+
+  Future<void> deleteHarness(int id) async {
+    state = const AsyncValue.loading();
+    state = await AsyncValue.guard(() async {
+      final repository = ref.read(rackRepositoryImplProvider.notifier);
+      await repository.deleteHarness(id);
+      return _loadRackItems();
+    });
+  }
 }
