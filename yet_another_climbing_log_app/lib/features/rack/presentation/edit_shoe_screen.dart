@@ -41,17 +41,29 @@ class EditShoeScreen extends ConsumerWidget {
             ),
             TextFormField(
               controller: sizeController,
-              decoration: const InputDecoration(labelText: 'Size'),
-              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(
+                labelText: 'Size',
+                hintText: 'e.g. 42.5 or 42,5',
+              ),
+              keyboardType: TextInputType.numberWithOptions(decimal: true),
+              validator: (value) {
+                if (value == null || value.isEmpty) return null;
+                final normalizedSize = value.replaceAll(',', '.');
+                if (double.tryParse(normalizedSize) == null) {
+                  return 'Please enter a valid size';
+                }
+                return null;
+              },
             ),
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
                 if (formKey.currentState?.validate() ?? false) {
+                  final normalizedSize = sizeController.text.replaceAll(',', '.');
                   final updatedShoe = shoe.copyWith(
                     brand: brandController.text,
                     model: modelController.text,
-                    size: double.tryParse(sizeController.text) ?? shoe.size,
+                    size: double.tryParse(normalizedSize) ?? shoe.size,
                   );
                   
                   ref.read(rackControllerProvider.notifier)

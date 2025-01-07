@@ -71,11 +71,12 @@ class RackManagementScreen extends ConsumerWidget {
                   onChanged: (value) => model = value,
                 ),
                 TextField(
-                  decoration: const InputDecoration(labelText: 'Size'),
+                  decoration: const InputDecoration(
+                    labelText: 'Size',
+                    hintText: 'e.g. 42.5 or 42,5',
+                  ),
                   keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                  onChanged: (value) {
-                    size = value.replaceAll(',', '.');
-                  },
+                  onChanged: (value) => size = value,
                 ),
                 const SizedBox(height: 16),
                 ElevatedButton(
@@ -87,7 +88,9 @@ class RackManagementScreen extends ConsumerWidget {
                       return;
                     }
 
-                    final sizeDouble = double.tryParse(size);
+                    final normalizedSize = size.replaceAll(',', '.');
+                    final sizeDouble = double.tryParse(normalizedSize);
+                    
                     if (sizeDouble == null) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text('Please enter a valid size')),
