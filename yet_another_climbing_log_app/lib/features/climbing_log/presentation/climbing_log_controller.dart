@@ -50,8 +50,6 @@ class ClimbingLogController extends _$ClimbingLogController {
         'try_number': route.tryNumber,
         'is_done': route.isDone ? 1 : 0,
         'done_type': route.doneType,
-        'shoes_id': route.shoesId,
-        'harness_id': route.harnessId,
       });
       return _loadClimbedRoutes();
     });
